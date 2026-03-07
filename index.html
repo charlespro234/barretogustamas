@@ -92,25 +92,6 @@
       color: var(--accent);
     }
 
-    .btn-primary {
-      padding: 0.65rem 1.6rem;
-      background: var(--text);
-      color: white;
-      border-radius: 6px;
-      font-size: 0.88rem;
-      font-weight: 600;
-      letter-spacing: 0.6px;
-      text-transform: uppercase;
-      border: none;
-      cursor: pointer;
-      transition: all 0.25s ease;
-    }
-
-    .btn-primary:hover {
-      background: #222;
-      transform: translateY(-1px);
-    }
-
     /* Dropdown para Catálogo - botón interactivo */
     .dropdown {
       position: relative;
@@ -342,7 +323,7 @@
 
     @media (max-width: 680px) {
       .hero-content h1 { font-size: 3.6rem; }
-      .hero-content p  { font-size: 1.18rem; }
+      .hero-content p { font-size: 1.18rem; }
       nav { gap: 1.2rem; font-size: 0.86rem; }
       .services-grid { gap: 2rem; }
     }
@@ -359,21 +340,18 @@
       <a href="#">Inicio</a>
       <a href="#">Servicios</a>
 
-      <!-- Botón interactivo "Catálogo" con menú desplegable -->
+      <!-- Menú desplegable interactivo CATÁLOGO -->
       <div class="dropdown" id="catalog-dropdown">
         <div class="dropdown-toggle" onclick="toggleDropdown()">
-          Catálogo
+          CATÁLOGO
         </div>
         <div class="dropdown-menu" id="catalog-menu">
           <a href="perfumeria.html" class="dropdown-item">Perfumería Original</a>
           <a href="relojeria.html" class="dropdown-item">Relojería</a>
           <a href="zapatos.html" class="dropdown-item">Zapatos</a>
-          <!-- Puedes agregar más categorías aquí cuando las tengas -->
         </div>
       </div>
 
-      <a href="#">Contacto</a>
-      <button class="btn-primary" onclick="goToCatalogAndOpenCart()">Compra Ahora</button>
     </nav>
   </header>
 
@@ -448,19 +426,18 @@
       header.classList.toggle('scrolled', window.scrollY > 80);
     });
 
-    // Función para ir al catálogo y abrir el carrito automáticamente
+    // Ir al catálogo y abrir carrito automáticamente
     function goToCatalogAndOpenCart() {
       localStorage.setItem('openCartOnLoad', 'true');
       window.location.href = 'perfumeria.html';
     }
 
-    // Función para abrir/cerrar el menú desplegable de Catálogo
+    // Menú desplegable interactivo (Catálogo)
     function toggleDropdown() {
       const dropdown = document.getElementById('catalog-dropdown');
       dropdown.classList.toggle('active');
     }
 
-    // Cerrar el menú si se hace clic fuera
     document.addEventListener('click', function(event) {
       const dropdown = document.getElementById('catalog-dropdown');
       if (!dropdown.contains(event.target)) {
