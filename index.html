@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Barreto Gustamas | Estilo STIK</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:        #ffffff;
+      --text:      #0f0f0f;
+      --text-light:#444444;
+      --gray:      #e8e8e8;
+      --gray-light:#f8f8f8;
+      --overlay:   rgba(15, 15, 15, 0.48);
+      --accent:    #000000;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ── Header ──────────────────────────────────────── */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 1.4rem 5vw;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      transition: all 0.4s ease;
+    }
+
+    header.scrolled {
+      padding: 1rem 5vw;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+    }
+
+    .logo {
+      font-weight: 700;
+      font-size: 1.5rem;
+      letter-spacing: -0.8px;
+      color: var(--text);
+    }
+
+    .logo span {
+      font-weight: 400;
+      color: var(--text-light);
+      font-size: 0.92rem;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      margin-left: 0.4rem;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 2.4rem;
+      position: relative;
+    }
+
+    nav a {
+      color: var(--text);
+      font-size: 0.92rem;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: color 0.25s ease;
+    }
+
+    nav a:hover,
+    nav a.active {
+      color: var(--accent);
+    }
+
+    .btn-primary {
+      padding: 0.65rem 1.6rem;
+      background: var(--text);
+      color: white;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .btn-primary:hover {
+      background: #222;
+      transform: translateY(-1px);
+    }
+
+    /* Dropdown para Catálogo - botón interactivo */
+    .dropdown {
+      position: relative;
+    }
+
+    .dropdown-toggle {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 0;
+    }
+
+    .dropdown-toggle::after {
+      content: '▼';
+      font-size: 0.7rem;
+      opacity: 0.7;
+      transition: transform 0.25s ease;
+    }
+
+    .dropdown.active .dropdown-toggle::after {
+      transform: rotate(180deg);
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      min-width: 220px;
+      padding: 0.8rem 0;
+      margin-top: 0.6rem;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(8px);
+      transition: all 0.25s ease;
+      z-index: 1000;
+      border: 1px solid rgba(0,0,0,0.08);
+    }
+
+    .dropdown.active .dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown-item {
+      display: block;
+      padding: 0.9rem 1.6rem;
+      color: var(--text);
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: background 0.2s ease;
+    }
+
+    .dropdown-item:hover {
+      background: var(--gray-light);
+      color: var(--accent);
+    }
+
+    /* ── Hero ────────────────────────────────────────── */
+    .hero {
+      height: 100vh;
+      min-height: 780px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: white;
+      overflow: hidden;
+    }
+
+    .hero-slider {
+      position: absolute;
+      inset: 0;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      transition: opacity 1.8s ease;
+    }
+
+    .slide.active {
+      opacity: 1;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: var(--overlay);
+      z-index: 1;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 880px;
+      padding: 0 5vw;
+    }
+
+    .hero-content h1 {
+      font-size: clamp(3.4rem, 8vw, 7.2rem);
+      font-weight: 300;
+      letter-spacing: -1.8px;
+      line-height: 0.92;
+      margin-bottom: 1.6rem;
+    }
+
+    .hero-content h1 strong {
+      font-weight: 700;
+      color: white;
+    }
+
+    .hero-content p {
+      font-size: clamp(1.18rem, 3vw, 1.42rem);
+      font-weight: 300;
+      max-width: 620px;
+      margin: 0 auto 2.8rem;
+      opacity: 0.92;
+    }
+
+    .hero-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1.6rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-hero {
+      padding: 1rem 2.8rem;
+      border: 1.5px solid white;
+      color: white;
+      font-size: 0.98rem;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      background: transparent;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.35s ease;
+    }
+
+    .btn-hero:hover {
+      background: white;
+      color: var(--text);
+      transform: translateY(-2px);
+    }
+
+    /* ── Servicios ───────────────────────────────────── */
+    .services {
+      padding: 12rem 5vw 10rem;
+      background: var(--bg);
+    }
+
+    .services h2 {
+      font-size: clamp(2.6rem, 6vw, 4.2rem);
+      font-weight: 300;
+      text-align: center;
+      letter-spacing: -1px;
+      margin-bottom: 6rem;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 2.8rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .service-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+      transition: all 0.4s ease;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
+    .service-card:hover {
+      transform: translateY(-12px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+    }
+
+    .service-card h4 {
+      font-size: 1.38rem;
+      font-weight: 600;
+      padding: 2.4rem 2.4rem 1rem;
+      letter-spacing: 0.4px;
+    }
+
+    .service-card p {
+      padding: 0 2.4rem 2.8rem;
+      color: var(--text-light);
+      font-size: 1.03rem;
+    }
+
+    /* ── Footer ──────────────────────────────────────── */
+    footer {
+      background: var(--text);
+      color: #aaa;
+      text-align: center;
+      padding: 5rem 5vw 3rem;
+      font-size: 0.92rem;
+    }
+
+    footer .tagline {
+      font-weight: 300;
+      letter-spacing: 1px;
+      margin-top: 1.2rem;
+      opacity: 0.7;
+    }
+
+    /* Responsive */
+    @media (max-width: 960px) {
+      header { padding: 1.2rem 6vw; }
+      nav { gap: 1.6rem; }
+      .services { padding: 8rem 6vw 6rem; }
+    }
+
+    @media (max-width: 680px) {
+      .hero-content h1 { font-size: 3.6rem; }
+      .hero-content p  { font-size: 1.18rem; }
+      nav { gap: 1.2rem; font-size: 0.86rem; }
+      .services-grid { gap: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header id="header">
+    <div class="logo">
+      BARRETO <span>GUSTAMAS</span>
+    </div>
+
+    <nav>
+      <a href="#">Inicio</a>
+      <a href="#">Servicios</a>
+
+      <!-- Botón interactivo "Catálogo" con menú desplegable -->
+      <div class="dropdown" id="catalog-dropdown">
+        <div class="dropdown-toggle" onclick="toggleDropdown()">
+          Catálogo
+        </div>
+        <div class="dropdown-menu" id="catalog-menu">
+          <a href="perfumeria.html" class="dropdown-item">Perfumería Original</a>
+          <a href="relojeria.html" class="dropdown-item">Relojería</a>
+          <a href="zapatos.html" class="dropdown-item">Zapatos</a>
+          <!-- Puedes agregar más categorías aquí cuando las tengas -->
+        </div>
+      </div>
+
+      <a href="#">Contacto</a>
+      <button class="btn-primary" onclick="goToCatalogAndOpenCart()">Compra Ahora</button>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-slider">
+      <div class="slide active" style="background-image: url('https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=90&w=1920');"></div>
+      <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&q=90&w=1920');"></div>
+      <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1491336477066-31156b5e4f35?auto=format&fit=crop&q=90&w=1920');"></div>
+    </div>
+
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+      <h1>Vive la mejor <strong>Experiencia</strong></h1>
+      <p>Dale un plus a tu outfit con nuestras mejores fragancias y accesorios.</p>
+
+      <div class="hero-buttons">
+        <button class="btn-hero" onclick="goToCatalogAndOpenCart()">Compra Ahora</button>
+        <a href="https://wa.me/573157660159?text=Hola%20Barreto%20Gustamas%2C%20me%20gustar%C3%ADa%20consultar%20sobre%20sus%20productos%20y%20servicios." 
+           target="_blank" 
+           rel="noopener noreferrer" 
+           class="btn-hero" 
+           style="background:white; color:#000; text-decoration:none; display:flex; align-items:center; justify-content:center;">
+          Contacto
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="services">
+    <h2>Nuestros Productos</h2>
+
+    <div class="services-grid">
+      <a href="perfumeria.html" class="service-card">
+        <h4>Perfumería Original</h4>
+        <p>Fragancias auténticas, elegantes y de gran duración.</p>
+      </a>
+
+      <a href="relojeria.html" class="service-card">
+        <h4>Relojería</h4>
+        <p>Piezas con carácter, diseño sofisticado y calidad superior.</p>
+      </a>
+
+      <a href="zapatos.html" class="service-card">
+        <h4>Zapatos</h4>
+        <p>Estilo definido y personalidad en cada paso que das.</p>
+      </a>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 Barreto Gustamas</p>
+    <p class="tagline">Elegancia · Autenticidad · Confianza</p>
+  </footer>
+
+  <script>
+    // Slider
+    const slides = document.querySelectorAll('.slide');
+    let current = 0;
+
+    function nextSlide() {
+      slides[current].classList.remove('active');
+      current = (current + 1) % slides.length;
+      slides[current].classList.add('active');
+    }
+
+    setInterval(nextSlide, 5800);
+
+    // Header scroll effect
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('scrolled', window.scrollY > 80);
+    });
+
+    // Función para ir al catálogo y abrir el carrito automáticamente
+    function goToCatalogAndOpenCart() {
+      localStorage.setItem('openCartOnLoad', 'true');
+      window.location.href = 'perfumeria.html';
+    }
+
+    // Función para abrir/cerrar el menú desplegable de Catálogo
+    function toggleDropdown() {
+      const dropdown = document.getElementById('catalog-dropdown');
+      dropdown.classList.toggle('active');
+    }
+
+    // Cerrar el menú si se hace clic fuera
+    document.addEventListener('click', function(event) {
+      const dropdown = document.getElementById('catalog-dropdown');
+      if (!dropdown.contains(event.target)) {
+        dropdown.classList.remove('active');
+      }
+    });
+  </script>
+
+</body>
+</html>

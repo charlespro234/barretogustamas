@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Perfumería Original | Barreto Gustamas</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Librería para generar QR (usamos CDN para simplicidad) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <style>
+    :root {
+      --primario: #ffffff;
+      --secundario: #111111;
+      --gris-suave: #f9f9f9;
+      --gris-borde: #eeeeee;
+      --texto-gris: #666666;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--primario);
+      color: var(--secundario);
+      line-height: 1.6;
+    }
+
+    /* ======================
+       HEADER (Minimalista)
+       ====================== */
+    header {
+      background: var(--primario);
+      padding: 1.5rem 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--gris-borde);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .logo-circle {
+      font-weight: 700;
+      font-size: 1.5rem;
+      letter-spacing: -1px;
+    }
+
+    .logo span {
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .back-btn {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--secundario);
+      text-decoration: none;
+      border-bottom: 1px solid var(--secundario);
+      padding-bottom: 2px;
+      transition: opacity 0.3s;
+    }
+
+    .back-btn:hover {
+      opacity: 0.6;
+    }
+
+    /* Icono de carrito en header */
+    .cart-icon {
+      position: relative;
+      cursor: pointer;
+      font-size: 1.2rem;
+      margin-left: 1rem;
+    }
+
+    .cart-icon::after {
+      content: attr(data-count);
+      position: absolute;
+      top: -5px;
+      right: -10px;
+      background: var(--secundario);
+      color: var(--primario);
+      font-size: 0.7rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 50%;
+      display: none;
+    }
+
+    .cart-icon[data-count]:not([data-count="0"])::after {
+      display: block;
+    }
+
+    /* ======================
+       CATÁLOGO
+       ====================== */
+    .catalogo {
+      padding: 4rem 4rem 7rem;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 3rem;
+      font-weight: 400;
+      margin-bottom: 3rem;
+      letter-spacing: -2px;
+    }
+
+    .section-title span {
+      font-weight: 700;
+      text-transform: lowercase;
+    }
+
+    /* Filtros Estilo STIK */
+    .filters {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .filter-btn {
+      background: transparent;
+      border: none;
+      color: var(--texto-gris);
+      padding: 0.5rem 1.5rem;
+      margin: 0 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .filter-btn::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      left: 50%;
+      background-color: var(--secundario);
+      transition: all 0.3s ease;
+      transform: translateX(-50%);
+    }
+
+    .filter-btn.active, .filter-btn:hover {
+      color: var(--secundario);
+    }
+
+    .filter-btn.active::after {
+      width: 30px;
+    }
+
+    /* Grid de Productos */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .product-card {
+      background: var(--primario);
+      border: 1px solid var(--gris-borde);
+      transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .product-card:hover {
+      border-color: var(--secundario);
+      transform: translateY(-5px);
+    }
+
+    .product-image {
+      width: 100%;
+      height: 350px;
+      object-fit: cover;
+      filter: grayscale(20%);
+      transition: filter 0.3s;
+    }
+
+    .product-card:hover .product-image {
+      filter: grayscale(0%);
+    }
+
+    .product-content {
+      padding: 2rem;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .product-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.5rem;
+    }
+
+    .product-price {
+      font-size: 1.2rem;
+      font-weight: 300;
+      color: var(--secundario);
+      margin-bottom: 1rem;
+    }
+
+    .product-desc {
+      font-size: 0.85rem;
+      color: var(--texto-gris);
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    /* Botones en la card: WhatsApp y Agregar al Carrito */
+    .product-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: auto;
+    }
+
+    .btn-whatsapp,
+    .btn-add-cart {
+      display: block;
+      border: 1px solid var(--secundario);
+      color: var(--secundario);
+      padding: 0.8rem;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      transition: all 0.3s ease;
+      width: 48%;
+      text-align: center;
+    }
+
+    .btn-add-cart {
+      background: var(--secundario);
+      color: var(--primario);
+    }
+
+    .btn-whatsapp:hover,
+    .btn-add-cart:hover {
+      background: var(--secundario);
+      color: var(--primario);
+    }
+
+    .btn-add-cart:hover {
+      background: var(--primario);
+      color: var(--secundario);
+    }
+
+    /* Modal del Carrito */
+    .cart-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 200;
+    }
+
+    .cart-content {
+      background: var(--primario);
+      padding: 2rem;
+      max-width: 500px;
+      width: 90%;
+      border: 1px solid var(--gris-borde);
+      position: relative;
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      cursor: pointer;
+      font-size: 1.5rem;
+    }
+
+    .cart-items {
+      margin-bottom: 2rem;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--gris-borde);
+      padding-bottom: 1rem;
+    }
+
+    .cart-item-name {
+      flex: 2;
+    }
+
+    .cart-item-price {
+      flex: 1;
+      text-align: right;
+    }
+
+    .cart-total {
+      font-size: 1.2rem;
+      font-weight: 700;
+      text-align: right;
+      margin-bottom: 1rem;
+    }
+
+    .btn-pay {
+      display: block;
+      width: 100%;
+      padding: 1rem;
+      background: var(--secundario);
+      color: var(--primario);
+      text-align: center;
+      text-transform: uppercase;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      margin-bottom: 1rem;
+    }
+
+    #qr-container {
+      text-align: center;
+      margin-top: 1rem;
+      display: none;
+    }
+
+    /* ======================
+       FOOTER
+       ====================== */
+    footer {
+      background: var(--secundario);
+      color: var(--primario);
+      text-align: center;
+      padding: 5rem 1rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-top: 4rem;
+    }
+
+    footer p {
+        opacity: 0.6;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .catalogo { padding: 3rem 1.5rem; }
+      header { padding: 1.5rem; }
+      .section-title { font-size: 2.2rem; }
+      .products-grid { grid-template-columns: 1fr; }
+      .product-buttons { flex-direction: column; }
+      .btn-whatsapp, .btn-add-cart { width: 100%; margin-bottom: 0.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <div class="logo-circle">BARRETO</div>
+      <span>GUSTAMAS</span>
+    </div>
+    <a href="index.html" class="back-btn">Volver al inicio</a>
+    <div class="cart-icon" id="cart-icon" data-count="0">🛒</div>
+  </header>
+
+  <section class="catalogo">
+    <h1 class="section-title">Perfumería <span>Original</span></h1>
+
+    <div class="filters">
+      <button class="filter-btn active" data-filter="todos">Todos</button>
+      <button class="filter-btn" data-filter="hombre">Hombre</button>
+      <button class="filter-btn" data-filter="mujer">Mujer</button>
+    </div>
+
+    <div class="products-grid">
+
+      <div class="product-card hombre">
+        <img src="PERFUMERIA/OUD FOR GLORY LATTAFA.jpeg" alt="Oud for Glory Lattafa" class="product-image" loading="lazy">
+        <div class="product-content">
+          <h3 class="product-title">OUD FOR GLORY</h3>
+          <div class="product-price">$1.450.000</div>
+          <p class="product-desc">Icónica masculina con piña fresca, abedul ahumado y almizcle. Poderosa y duradera.</p>
+          <div class="product-buttons">
+            <a href="https://wa.me/573157660159?text=Hola,%20me%20interesa%20OUD%20FOR%20GLORY" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
+              Consultar Disponibilidad
+            </a>
+            <button class="btn-add-cart" data-title="OUD FOR GLORY" data-price="1450000">Agregar al Carrito</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card hombre">
+        <img src="PERFUMERIA/KMARAH LATTAFA.jpeg" alt="Kmarah Lattafa" class="product-image">
+        <div class="product-content">
+          <h3 class="product-title">KMARAH LATTAFA</h3>
+          <div class="product-price">$520.000</div>
+          <p class="product-desc">Intensa y especiada, lavanda, canela y sándalo. Potente y moderna para hombre.</p>
+          <div class="product-buttons">
+            <a href="https://wa.me/573157660159?text=Hola,%20me%20interesa%20KMARAH%20LATTAFA" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
+              Consultar Disponibilidad
+            </a>
+            <button class="btn-add-cart" data-title="KMARAH LATTAFA" data-price="520000">Agregar al Carrito</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card hombre">
+        <img src="PERFUMERIA/PRIDE OF LATTAFA.jpeg" alt="Pride of Lattafa" class="product-image">
+        <div class="product-content">
+          <h3 class="product-title">PRIDE OF LATTAFA</h3>
+          <div class="product-price">$480.000</div>
+          <p class="product-desc">Dulce y seductora con almendra, jazmín y cacao. Elegante y masculina irresistible.</p>
+          <div class="product-buttons">
+            <a href="https://wa.me/573157660159?text=Hola,%20me%20interesa%20PRIDE%20OF%20LATTAFA" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
+              Consultar Disponibilidad
+            </a>
+            <button class="btn-add-cart" data-title="PRIDE OF LATTAFA" data-price="480000">Agregar al Carrito</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card hombre">
+        <img src="PERFUMERIA/ODISSEY HOME.jpeg" alt="Odissey Home" class="product-image">
+        <div class="product-content">
+          <h3 class="product-title">ODISSEY HOME</h3>
+          <div class="product-price">$420.000</div>
+          <p class="product-desc">Fragancia profunda con notas amaderadas y frescas. Ideal para el uso diario.</p>
+          <div class="product-buttons">
+            <a href="https://wa.me/573157660159?text=Hola,%20me%20interesa%20ODISSEY%20HOME" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
+              Consultar Disponibilidad
+            </a>
+            <button class="btn-add-cart" data-title="ODISSEY HOME" data-price="420000">Agregar al Carrito</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card hombre">
+        <img src="PERFUMERIA/ODISSEY MANDARIN.jpeg" alt="Odissey Mandarin" class="product-image">
+        <div class="product-content">
+          <h3 class="product-title">ODISSEY MANDARIN</h3>
+          <div class="product-price">$420.000</div>
+          <p class="product-desc">Explosión cítrica de mandarina con un fondo elegante y vibrante.</p>
+          <div class="product-buttons">
+            <a href="https://wa.me/573157660159?text=Hola,%20me%20interesa%20ODISSEY%20MANDARIN" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
+              Consultar Disponibilidad
+            </a>
+            <button class="btn-add-cart" data-title="ODISSEY MANDARIN" data-price="420000">Agregar al Carrito</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card hombre">
+        <img src="PERFUMERIA/ODISSEY MEGA.jpeg" alt="Odissey Mega" class="product-image">
+        <div class="product-content">
+          <h3 class="product-title">ODISSEY MEGA</h3>
+          <div class="product-price">$420.000</div>
+          <p class="product-desc">Una fragancia imponente diseñada para dejar huella en cualquier lugar.</p>
+          <div class="product-buttons">
+            <a href="https://wa.me/573157660159?text=Hola,%20me%20interesa%20ODISSEY%20MEGA" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
+              Consultar Disponibilidad
+            </a>
+            <button class="btn-add-cart" data-title="ODISSEY MEGA" data-price="420000">Agregar al Carrito</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card hombre">
+        <img src="PERFUMERIA/ODISSEY WILD ONE.jpeg" alt="Odissey Wild One" class="product-image">
+        <div class="product-content">
+          <h3 class="product-title">ODISSEY WILD ONE</h3>
+          <div class="product-price">$420.000</div>
+          <p class="product-desc">Aroma audaz y salvaje, mezcla perfecta de especias y maderas nobles.</p>
+          <div class="product-buttons">
+            <a href="https://wa.me/573157660159?text=Hola,%20me%20interesa%20ODISSEY%20WILD%20ONE" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
+              Consultar Disponibilidad
+            </a>
+            <button class="btn-add-cart" data-title="ODISSEY WILD ONE" data-price="420000">Agregar al Carrito</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card hombre">
+        <img src="PERFUMERIA/JEAN LOWE NOIR.jpeg" alt="Jean Lowe Noir" class="product-image">
+        <div class="product-content">
+          <h3 class="product-title">JEAN LOWE NOIR</h3>
+          <div class="product-price">$420.000</div>
+          <p class="product-desc">Oscura, misteriosa y altamente sofisticada. Para ocasiones especiales.</p>
+          <div class="product-buttons">
+            <a href="https://wa.me/573157660159?text=Hola,%20me%20interesa%20JEAN%20LOWE%20NOIR" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
+              Consultar Disponibilidad
+            </a>
+            <button class="btn-add-cart" data-title="JEAN LOWE NOIR" data-price="420000">Agregar al Carrito</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card hombre">
+        <img src="PERFUMERIA/JEAN LOWE VIBE.jpeg" alt="Jean Lowe Vibe" class="product-image">
+        <div class="product-content">
+          <h3 class="product-title">JEAN LOWE VIBE</h3>
+          <div class="product-price">$420.000</div>
+          <p class="product-desc">Energía pura y frescura en una botella. El complemento ideal para tu día.</p>
+          <div class="product-buttons">
+            <a href="https://wa.me/573157660159?text=Hola,%20me%20interesa%20JEAN%20LOWE%20VIBE" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
+              Consultar Disponibilidad
+            </a>
+            <button class="btn-add-cart" data-title="JEAN LOWE VIBE" data-price="420000">Agregar al Carrito</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card hombre">
+        <img src="PERFUMERIA/MONT BLANC EMBLEM.jpeg" alt="Mont Blanc Emblem" class="product-image">
+        <div class="product-content">
+          <h3 class="product-title">MONT BLANC EMBLEM</h3>
+          <div class="product-price">$420.000</div>
+          <p class="product-desc">Elegancia clásica con notas de canela, hojas de violeta y maderas.</p>
+          <div class="product-buttons">
+            <a href="https://wa.me/573157660159?text=Hola,%20me%20interesa%20MONT%20BLANC%20EMBLEM" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
+              Consultar Disponibilidad
+            </a>
+            <button class="btn-add-cart" data-title="MONT BLANC EMBLEM" data-price="420000">Agregar al Carrito</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card hombre">
+        <img src="PERFUMERIA/MONT BLANC LEGEND.jpeg" alt="Mont Blanc Legend" class="product-image">
+        <div class="product-content">
+          <h3 class="product-title">MONT BLANC LEGEND</h3>
+          <div class="product-price">$420.000</div>
+          <p class="product-desc">Un aroma atemporal, masculino y fresco con notas de lavanda y bergamota.</p>
+          <div class="product-buttons">
+            <a href="https://wa.me/573157660159?text=Hola,%20me%20interesa%20MONT%20BLANC%20LEGEND" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
+              Consultar Disponibilidad
+            </a>
+            <button class="btn-add-cart" data-title="MONT BLANC LEGEND" data-price="420000">Agregar al Carrito</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card mujer">
+        <img src="PERFUMERIA/LATTAFA MAYAR.jpeg" alt="Mayar Lattafa" class="product-image">
+        <div class="product-content">
+          <h3 class="product-title">MAYAR LATTAFA</h3>
+          <div class="product-price">$420.000</div>
+          <p class="product-desc">Un aroma atemporal, femenino y fresco con notas florales y frutales.</p>
+          <div class="product-buttons">
+            <a href="https://wa.me/573157660159?text=Hola,%20me%20interesa%20MAYAR%20LATTAFA" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
+              Consultar Disponibilidad
+            </a>
+            <button class="btn-add-cart" data-title="MAYAR LATTAFA" data-price="420000">Agregar al Carrito</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card mujer">
+        <img src="PERFUMERIA/LATTAFA THE KINGDOM.jpeg" alt="The Kingdom Lattafa" class="product-image">
+        <div class="product-content">
+          <h3 class="product-title">THE KINGDOM LATTAFA</h3>
+          <div class="product-price">$420.000</div>
+          <p class="product-desc">Elegante y misterioso, con notas de vainilla y ámbar.</p>
+          <div class="product-buttons">
+            <a href="https://wa.me/573157660159?text=Hola,%20me%20interesa%20THE%20KINGDOM%20LATTAFA" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
+              Consultar Disponibilidad
+            </a>
+            <button class="btn-add-cart" data-title="THE KINGDOM LATTAFA" data-price="420000">Agregar al Carrito</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card mujer">
+        <img src="PERFUMERIA/LATTAFA YARA.jpeg" alt="Yara Lattafa" class="product-image">
+        <div class="product-content">
+          <h3 class="product-title">YARA LATTAFA</h3>
+          <div class="product-price">$420.000</div>
+          <p class="product-desc">Dulce y cautivador con toques de caramelo y flores.</p>
+          <div class="product-buttons">
+            <a href="https://wa.me/573157660159?text=Hola,%20me%20interesa%20YARA%20LATTAFA" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
+              Consultar Disponibilidad
+            </a>
+            <button class="btn-add-cart" data-title="YARA LATTAFA" data-price="420000">Agregar al Carrito</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card mujer">
+        <img src="PERFUMERIA/MAST PERFUME SWEET VELVET.jpeg" alt="Mast Perfume Sweet Velvet" class="product-image">
+        <div class="product-content">
+          <h3 class="product-title">MAST PERFUME SWEET VELVET</h3>
+          <div class="product-price">$420.000</div>
+          <p class="product-desc">Suave y dulce como el terciopelo, con notas gourmand.</p>
+          <div class="product-buttons">
+            <a href="https://wa.me/573157660159?text=Hola,%20me%20interesa%20MAST%20PERFUME%20SWEET%20VELVET" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
+              Consultar Disponibilidad
+            </a>
+            <button class="btn-add-cart" data-title="MAST PERFUME SWEET VELVET" data-price="420000">Agregar al Carrito</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card mujer">
+        <img src="PERFUMERIA/STALLION 53.jpeg" alt="Stallion 53" class="product-image">
+        <div class="product-content">
+          <h3 class="product-title">STALLION 53</h3>
+          <div class="product-price">$420.000</div>
+          <p class="product-desc">Potente y femenina con especias y maderas exóticas.</p>
+          <div class="product-buttons">
+            <a href="https://wa.me/573157660159?text=Hola,%20me%20interesa%20STALLION%2053" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
+              Consultar Disponibilidad
+            </a>
+            <button class="btn-add-cart" data-title="STALLION 53" data-price="420000">Agregar al Carrito</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card mujer">
+        <img src="PERFUMERIA/NOW WOMEN RAVE.jpeg" alt="Now Women Rave" class="product-image">
+        <div class="product-content">
+          <h3 class="product-title">NOW WOMEN RAVE</h3>
+          <div class="product-price">$420.000</div>
+          <p class="product-desc">Vibrante y festiva, ideal para noches de fiesta.</p>
+          <div class="product-buttons">
+            <a href="https://wa.me/573157660159?text=Hola,%20me%20interesa%20NOW%20WOMEN%20RAVE" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
+              Consultar Disponibilidad
+            </a>
+            <button class="btn-add-cart" data-title="NOW WOMEN RAVE" data-price="420000">Agregar al Carrito</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card mujer">
+        <img src="PERFUMERIA/DELILAH POUR FEMME.jpeg" alt="Delilah Pour Femme" class="product-image">
+        <div class="product-content">
+          <h3 class="product-title">DELILAH POUR FEMME</h3>
+          <div class="product-price">$420.000</div>
+          <p class="product-desc">Delicada y romántica con flores y frutas suaves.</p>
+          <div class="product-buttons">
+            <a href="https://wa.me/573157660159?text=Hola,%20me%20interesa%20DELILAH%20POUR%20FEMME" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
+              Consultar Disponibilidad
+            </a>
+            <button class="btn-add-cart" data-title="DELILAH POUR FEMME" data-price="420000">Agregar al Carrito</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card mujer">
+        <img src="PERFUMERIA/MOSCHINO FUNNY.jpeg" alt="Moschino Funny" class="product-image">
+        <div class="product-content">
+          <h3 class="product-title">MOSCHINO FUNNY</h3>
+          <div class="product-price">$420.000</div>
+          <p class="product-desc">Divertida y ligera con cítricos y té verde.</p>
+          <div class="product-buttons">
+            <a href="https://wa.me/573157660159?text=Hola,%20me%20interesa%20MOSCHINO%20FUNNY" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
+              Consultar Disponibilidad
+            </a>
+            <button class="btn-add-cart" data-title="MOSCHINO FUNNY" data-price="420000">Agregar al Carrito</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card mujer">
+        <img src="PERFUMERIA/MAST PERFUME VELVET ROSE.jpeg" alt="Mast Perfume Velvet Rose" class="product-image">
+        <div class="product-content">
+          <h3 class="product-title">MAST PERFUME VELVET ROSE</h3>
+          <div class="product-price">$420.000</div>
+          <p class="product-desc">Rosa aterciopelada con toques de miel y vainilla.</p>
+          <div class="product-buttons">
+            <a href="https://wa.me/573157660159?text=Hola,%20me%20interesa%20MAST%20PERFUME%20VELVET%20ROSE" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
+              Consultar Disponibilidad
+            </a>
+            <button class="btn-add-cart" data-title="MAST PERFUME VELVET ROSE" data-price="420000">Agregar al Carrito</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Modal del Carrito -->
+  <div class="cart-modal" id="cart-modal">
+    <div class="cart-content">
+      <span class="close-modal" id="close-modal">×</span>
+      <h2>Tu Carrito</h2>
+
+      <div class="cart-items" id="cart-items"></div>
+
+      <div class="cart-total" id="cart-total">Total: $0</div>
+
+      <button class="btn-pay" id="btn-pay">Proceder al pago</button>
+
+      <div id="qr-container">
+        <div id="qr-code"></div>
+        <p>Escanea para coordinar pago (WhatsApp / Nequi / transferencia)</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 Barreto Gustamas · Barranquilla, Colombia</p>
+    <p style="margin-top:10px; font-weight:300; font-size:0.65rem;">Elegancia, autenticidad y confianza</p>
+  </footer>
+
+  <script>
+    // Filtros
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const filter = btn.dataset.filter;
+        document.querySelectorAll('.product-card').forEach(card => {
+          card.style.display = (filter === 'todos' || card.classList.contains(filter)) ? 'flex' : 'none';
+        });
+      });
+    });
+
+    // Carrito
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    const cartIcon     = document.getElementById('cart-icon');
+    const cartModal    = document.getElementById('cart-modal');
+    const closeModal   = document.getElementById('close-modal');
+    const cartItemsEl  = document.getElementById('cart-items');
+    const cartTotalEl  = document.getElementById('cart-total');
+    const btnPay       = document.getElementById('btn-pay');
+    const qrContainer  = document.getElementById('qr-container');
+    const qrCodeEl     = document.getElementById('qr-code');
+
+    function updateCartCount() {
+      const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+      cartIcon.dataset.count = count;
+    }
+
+    function renderCart() {
+      cartItemsEl.innerHTML = '';
+      let total = 0;
+
+      cart.forEach((item, index) => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = `
+          <div class="cart-item-info">
+            <div class="cart-item-title">${item.title}</div>
+            <div class="cart-item-price">$${item.price.toLocaleString()}</div>
+          </div>
+
+          <div class="cart-item-quantity">
+            <button class="qty-btn minus" data-index="${index}">-</button>
+            <span class="qty-display">${item.quantity}</span>
+            <button class="qty-btn plus" data-index="${index}">+</button>
+          </div>
+
+          <span class="cart-item-remove" data-index="${index}">🗑</span>
+        `;
+        cartItemsEl.appendChild(div);
+      });
+
+      cartTotalEl.textContent = `Total: $${total.toLocaleString()}`;
+      updateCartCount();
+      localStorage.setItem('cart', JSON.stringify(cart));
+    }
+
+    // Agregar producto
+    document.querySelectorAll('.btn-add-cart').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const title = btn.dataset.title;
+        const price = parseInt(btn.dataset.price);
+
+        const existing = cart.find(item => item.title === title);
+        if (existing) {
+          existing.quantity++;
+        } else {
+          cart.push({ title, price, quantity: 1 });
+        }
+
+        renderCart();
+
+        const originalText = btn.textContent;
+        btn.textContent = "¡Agregado!";
+        setTimeout(() => btn.textContent = originalText, 1200);
+      });
+    });
+
+    // Eventos dentro del carrito: + / - / eliminar
+    cartItemsEl.addEventListener('click', e => {
+      const index = parseInt(e.target.dataset.index);
+      if (isNaN(index)) return;
+
+      if (e.target.classList.contains('plus')) {
+        cart[index].quantity++;
+      }
+      else if (e.target.classList.contains('minus')) {
+        cart[index].quantity--;
+        if (cart[index].quantity <= 0) {
+          cart.splice(index, 1);
+        }
+      }
+      else if (e.target.classList.contains('cart-item-remove')) {
+        cart.splice(index, 1);
+      }
+
+      renderCart();
+    });
+
+    // Abrir / cerrar modal
+    cartIcon.addEventListener('click', () => {
+      renderCart();
+      qrContainer.style.display = 'none';
+      cartModal.style.display = 'flex';
+    });
+
+    closeModal.addEventListener('click', () => {
+      cartModal.style.display = 'none';
+    });
+
+    // Pago con QR
+    btnPay.addEventListener('click', () => {
+      const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+      if (total === 0) {
+        alert('Tu carrito está vacío');
+        return;
+      }
+
+      const message = `Hola, quiero pagar $${total.toLocaleString()} por:\n` +
+                      cart.map(i => `• ${i.title} × ${i.quantity}`).join('\n');
+
+      const waLink = `https://wa.me/573157660159?text=${encodeURIComponent(message)}`;
+
+      qrCodeEl.innerHTML = '';
+      new QRCode(qrCodeEl, {
+        text: waLink,
+        width: 220,
+        height: 220,
+        colorDark: "#000000",
+        colorLight: "#ffffff"
+      });
+
+      qrContainer.style.display = 'block';
+    });
+
+    // Inicializar
+    renderCart();
+
+    window.addEventListener('load', () => {
+  if (localStorage.getItem('openCartOnLoad') === 'true') {
+    localStorage.removeItem('openCartOnLoad');
+    document.getElementById('cart-icon')?.click();
+  }
+});
+
+
+
+  </script>
+
+</body>
+</html>
